@@ -230,7 +230,7 @@ int changeValue()
 int withinSameBlock(int *ptr1, int *ptr2)
 {
   // Your code here
-  return 2;
+  return ((unsigned long)ptr1 >> 6) == ((unsigned long)ptr2 >> 6);
 }
 
 /*
@@ -254,8 +254,10 @@ int withinSameBlock(int *ptr1, int *ptr2)
  */
 int withinArray(int *intArray, int size, int *ptr)
 {
-  // Your code here
-  return 2;
+  int *start = intArray;
+  int *end = intArray + size;
+
+  return !((unsigned long)(start - ptr) ^ (unsigned long)(end - ptr) >> sizeof(long) * 8 - 1);
 }
 
 /*
@@ -278,7 +280,7 @@ int withinArray(int *intArray, int size, int *ptr)
 int stringLength(char *s)
 {
   // Your code here
-  return 2;
+  return !(*s) ? 0 : 1 + stringLength(s + 1);
 }
 
 /*
@@ -297,7 +299,7 @@ int stringLength(char *s)
  *   Pointer operators: *, &
  *   Binary integer operators: -, +, *
  *   Shorthand operators based on the above: ex. +=, *=, ++, --, etc.
- *   Unary integer operators: !
+ *   Unary integer operators: !*
  *
  * DISALLOWED:
  *   Pointer operators: [] (Array Indexing Operator)
@@ -306,8 +308,13 @@ int stringLength(char *s)
  */
 int endianExperiment(int *ptr)
 {
-  char *bytePtr;
-  // Your code here
+  char *bytePtr = (char *)ptr;
+
+  *bytePtr = 255;
+  *(bytePtr + 1) = 19;
+  *(bytePtr + 2) = 72;
+  *(bytePtr + 3) = 0;
+
   return *ptr;
 }
 
@@ -371,7 +378,14 @@ int smallest_idx(int *arr, int len)
   int smallest_i = 0;
   int smallest = arr[0];
 
-  // TODO: implement me using a for loop.
+  for (i = 0; i < len; i++)
+  {
+    if (*(arr + i) < smallest)
+    {
+      smallest_i = i;
+      smallest = *(arr + i);
+    }
+  }
 
   return smallest_i;
 }
